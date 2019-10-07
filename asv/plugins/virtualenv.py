@@ -167,7 +167,10 @@ class Virtualenv(environment.Environment):
                     pkg = key[4:]
 
                 if val:
-                    args.append("{0}=={1}".format(pkg, val))
+                    if val.startswith('git'):
+                        args.append(val)
+                    else:
+                        args.append("{0}=={1}".format(pkg, val))
                 else:
                     args.append(pkg)
             self._run_pip(args, timeout=self._install_timeout, env=env)
