@@ -160,6 +160,7 @@ class Virtualenv(environment.Environment):
         self._run_pip(pip_args, env=env)
 
         if self._requirements:
+            # installs regular packages
             args = ['install', '-v', '--upgrade']
             for key, val in six.iteritems(self._requirements):
                 pkg = key
@@ -168,12 +169,22 @@ class Virtualenv(environment.Environment):
 
                 if val:
                     if val.startswith('git'):
-                        args.append(val)
+                        pass
                     else:
                         args.append("{0}=={1}".format(pkg, val))
                 else:
                     args.append(pkg)
             self._run_pip(args, timeout=self._install_timeout, env=env)
+
+            # installs packages with git
+            args = ['install', '-v']
+            for key, val in six.iteritems(self._requirements):
+                pkg = key
+                if key.startswith('pip+'):
+                    continue
+
+                if val and val.startswith('git'):
+                    self._run_pip(args + [val], timeout=self._install_timeout, env=env)
 
     def _run_pip(self, args, **kwargs):
         # Run pip via python -m pip, so that it works on Windows when
