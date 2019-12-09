@@ -170,6 +170,9 @@ class Virtualenv(environment.Environment):
                 if val:
                     if val.startswith('git+'):
                         pass
+                    elif val.endswith('/simple/'):
+                        # new pypi server
+                        pass
                     else:
                         args.append("{0}=={1}".format(pkg, val))
                 else:
@@ -183,8 +186,14 @@ class Virtualenv(environment.Environment):
                 if key.startswith('pip+'):
                     continue
 
-                if val and val.startswith('git+'):
-                    self._run_pip(args + [val], timeout=self._install_timeout, env=env)
+                if val:
+                    if val.startswith('git+'):
+                        self._run_pip(args + [val], timeout=self._install_timeout, env=env)
+                    elif val.endswith('/simple/'):
+                        aargs = ['--no-cache-dir', '--no-deps', '--index',
+                                 val, pkg, '--upgrade', '--extra-index-url',
+                                 'https://pypi.python.org/simple/']
+                        self._run_pip(aargs, timeout=self._install_timeout, env=env)
 
     def _run_pip(self, args, **kwargs):
         # Run pip via python -m pip, so that it works on Windows when
