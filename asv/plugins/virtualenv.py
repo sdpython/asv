@@ -193,7 +193,7 @@ class Virtualenv(environment.Environment):
                         aargs = ['--no-cache-dir', '--no-deps', '--index',
                                  val, pkg, '--upgrade', '--extra-index-url',
                                  'https://pypi.python.org/simple/']
-                        self._run_pip(aargs, timeout=self._install_timeout, env=env)
+                        self._run_pip(args + aargs, timeout=self._install_timeout, env=env)
 
     def _run_pip(self, args, **kwargs):
         # Run pip via python -m pip, so that it works on Windows when
