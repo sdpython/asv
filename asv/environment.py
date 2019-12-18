@@ -295,7 +295,7 @@ def get_env_name(tool_name, python, requirements, tagged_env_vars, build=False):
     final = final.replace("git+https___github.com_", "gith-")
     final = final.replace("http___localhost_8067_simple_", "localpypi")
     final = final.replace("Intel(R) Xeon(R) CPU ", "IXeonCPU")
-    final = final.(" V2 @ ", "")
+    final = final.replace(" V2 @ ", "")
     return final
 
 
