@@ -10,24 +10,7 @@ addons:
 
 matrix:
   include:
-    - python: 2.7
-      env:
-        - PYFLAKES=1
-      install:
-        - pip install pyflakes
-      script:
-        - |
-          set +e
-          SKIP="unable to detect undefined names"
-          SKIP="$SKIP|assigned to but never used"
-          SKIP="$SKIP|imported but unused"
-          SKIP="$SKIP|redefinition of unused"
-          SKIP="$SKIP|test/test_repo_template/asv_test_repo/__init__.py"
-          SKIP="$SKIP|asv/extern/asizeof.py"
-          SKIP="$SKIP|asv/benchmark.py.*undefined name .(run|params)."
-          PYFLAKES_NODOCTEST=1 pyflakes asv test | grep -E -v "$SKIP" > test.out; cat test.out; test \! -s test.out
-
-    - python: 3.8-dev
+    - python: 3.8
       dist: xenial
       env:
         - COVERAGE="--cov=asv --cov=test"
@@ -36,12 +19,9 @@ matrix:
       env:
         - USE_CONDA=true
 
-    - python: pypy3
+    - python: 3.7
       dist: xenial
 
-    - python: 2.7
-
-    - python: 3.5
 
 cache:
   directories:
