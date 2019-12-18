@@ -601,7 +601,7 @@ def test_environment_name_sanitization():
     # Check name sanitization
     environments = list(environment.get_environments(conf, []))
     assert len(environments) == 1
-    assert environments[0].name == "conda-py3.5-pip+git+http___github.com_space-telescope_asv.git"
+    assert environments[0].name == "conda-py3.5-pip+gith-space-telescope_asv"
 
 
 @pytest.mark.parametrize("environment_type", [
