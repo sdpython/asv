@@ -134,8 +134,12 @@ class Graph(object):
                 part = '{0}-{1}'.format(key, val)
             else:
                 part = '{0}'.format(key)
-            parts.append(util.sanitize_filename(part))
-        parts.append(util.sanitize_filename(benchmark_name))
+            parts.append(
+                util.sanitize_filename_2(
+                    util.sanitize_filename(part)))
+        parts.append(
+            util.sanitize_filename_2(
+                util.sanitize_filename(benchmark_name)))
         return os.path.join(*parts)
 
     def add_data_point(self, revision, value, weight=None):

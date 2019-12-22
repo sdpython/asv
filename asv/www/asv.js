@@ -246,6 +246,19 @@ $(document).ready(function() {
         return name;
     }
 
+    /* Shorten names.
+       The implementation must match asv.util.sanitize_filename_2 */
+       function sanitize_filename_2(name) {
+        final = name.replace(".git@", "-")
+        final = final.replace(".git", "")
+        final = final.replace("git+https___github.com_", "gith-")
+        final = final.replace("git+http___github.com_", "gith-")
+        final = final.replace("http___localhost_8067_simple_", "localpypi")
+        final = final.replace("Intel(R) Xeon(R) CPU ", "IXeonCPU")
+        final = final.replace(" V2 @ ", "")
+        return final;
+    }
+
     /* Given a specific group of parameters, generate the URL to
        use to load that graph.
        The implementation must match asv.graph.Graph.get_file_path
@@ -261,11 +274,11 @@ $(document).ready(function() {
             } else {
                 part = key;
             }
-            parts.push(sanitize_filename('' + part));
+            parts.push(sanitize_filename_2(sanitize_filename('' + part)));
         });
         parts.sort();
         parts.splice(0, 0, "graphs");
-        parts.push(sanitize_filename(benchmark_name));
+        parts.push(sanitize_filename_2(sanitize_filename(benchmark_name)));
 
         /* Escape URI components */
         parts = $.map(parts, function (val) { return encodeURIComponent(val); });

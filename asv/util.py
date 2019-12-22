@@ -1263,6 +1263,22 @@ def sanitize_filename(filename):
     return filename
 
 
+def sanitize_filename_2(filename):
+    """
+    Shorten filenames.
+
+    This is not a 1-to-1 mapping.
+    """
+    final = filename.replace(".git@", "-")
+    final = final.replace(".git", "")
+    final = final.replace("git+https___github.com_", "gith-")
+    final = final.replace("git+http___github.com_", "gith-")
+    final = final.replace("http___localhost_8067_simple_", "localpypi")
+    final = final.replace("Intel(R) Xeon(R) CPU ", "IXeonCPU")
+    final = final.replace(" V2 @ ", "")
+    return final
+
+
 def namedtuple_with_doc(name, slots, doc):
     cls = collections.namedtuple(name, slots)
     if sys.version_info[0] >= 3:
