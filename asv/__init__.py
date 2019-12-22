@@ -9,8 +9,8 @@ import sys
 
 # This __version__ assignment is parsed by setup.py; keep it in this form.
 # Development versions end with ".dev" (suffix is added below).
-__version__ = "0.6.dev"
-__release__ = not __version__.endswith(".dev")
+__version__ = "0.6.99"
+__release__ = not __version__.endswith(".dev") and not '.99' in __version__
 
 try:
     from ._version import __githash__, __suffix__
