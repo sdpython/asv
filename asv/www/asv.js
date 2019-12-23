@@ -245,18 +245,41 @@ $(document).ready(function() {
         }
         return name;
     }
+    
+    function stringToHash(string) { 
+        var hash = 0; 
+        if (string.length == 0)
+            return hash; 
+        for (i = 0; i < string.length; i++) { 
+            char = string.charCodeAt(i); 
+            hash = ((hash << 5) - hash) + char; 
+            hash = hash & hash; 
+        }
+        var h = "hash_" + hash.toString();
+        if (h.length > 20)
+            return h.substring(0, 20);
+        return h;
+    } 
 
     /* Shorten names.
        The implementation must match asv.util.sanitize_filename_2 */
        function sanitize_filename_2(name) {
-        final = name.replace(".git@", "-")
-        final = final.replace(".git", "")
-        final = final.replace("git+https___github.com_", "gith-")
-        final = final.replace("git+http___github.com_", "gith-")
-        final = final.replace("http___localhost_8067_simple_", "localpypi")
-        final = final.replace("Intel(R) Xeon(R) CPU ", "IXeonCPU")
-        final = final.replace(" V2 @ ", "")
-        return final;
+        name = name.replace(".git@", "-");
+        name = name.replace(".git", "");
+        name = name.replace("git+https___github.com_", "gith-");
+        name = name.replace("git+http___github.com_", "gith-");
+        name = name.replace("http___localhost_8067_simple_", "localpypi");
+        name = name.replace("Intel(R) Xeon(R) CPU ", "IXeonCPU");
+        name = name.replace(" V2 @ ", "");
+        if (name.length > 250) {
+            var ext = name.substring(name.lastIndexOf('.'), name.length);
+            var spl = name.split("/graphs/");
+            var fold = spl[0];
+            name = spl.splice(1).join("/graphs/");
+            name = name.substring(0, name.lastIndexOf('.'));
+            name = fold + "/graphs/" + stringToHash(name) + ext;
+        }
+        return name;
     }
 
     /* Given a specific group of parameters, generate the URL to

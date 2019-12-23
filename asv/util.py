@@ -1263,6 +1263,18 @@ def sanitize_filename(filename):
     return filename
 
 
+def stringToHash(st):
+    hash = 0
+    for i in range(len(st)):
+        char = ord(st[i])
+        hash = ((hash << 5) - hash) + char
+        hash = hash & hash
+    h = "hash_" + str(hash);
+    if len(h) > 20:
+        return h[:20]
+    return h
+
+
 def sanitize_filename_2(filename):
     """
     Shorten filenames.
@@ -1276,6 +1288,14 @@ def sanitize_filename_2(filename):
     final = final.replace("http___localhost_8067_simple_", "localpypi")
     final = final.replace("Intel(R) Xeon(R) CPU ", "IXeonCPU")
     final = final.replace(" V2 @ ", "")
+    if len(final) > 250:
+        name = final.replace("\\", "/")
+        spl = name.split('/graphs/')
+        fold = spl[0]
+        name = '/graphs/'.join(spl[1:])
+        name, ext = os.path.splitext(name)
+        name = stringToHash(name)
+        final = os.path.join(fold, 'graphs', name + ext)
     return final
 
 
