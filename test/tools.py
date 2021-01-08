@@ -64,11 +64,23 @@ except (RuntimeError, IOError):
     HAS_PYPY = hasattr(sys, 'pypy_version_info') and (sys.version_info[:2] == (2, 7))
 
 
+def _check_conda():
+    from asv.plugins.conda import _conda_lock
+    conda = _find_conda()
+    with _conda_lock():
+        try:
+            subprocess.check_call([conda, 'build', '--version'],
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError:
+            raise RuntimeError("conda-build is missing")
+
+
 try:
     # Conda can install required Python versions on demand
-    _find_conda()
+    _check_conda()
     HAS_CONDA = True
-except (RuntimeError, IOError):
+except (RuntimeError, IOError) as exc:
     HAS_CONDA = False
 
 
@@ -435,7 +447,7 @@ def generate_repo_from_ops(tmpdir, dvcs_type, operations):
     return dvcs
 
 
-def generate_result_dir(tmpdir, dvcs, values, branches=None):
+def generate_result_dir(tmpdir, dvcs, values, branches=None, updated=None):
     result_dir = join(tmpdir, "results")
     os.makedirs(result_dir)
     html_dir = join(tmpdir, "html")
@@ -459,7 +471,8 @@ def generate_result_dir(tmpdir, dvcs, values, branches=None):
         'version': 1,
     })
 
-    timestamp = datetime.datetime.utcnow()
+    if updated is None:
+        updated = datetime.datetime(1970, 1, 1)
 
     benchmark_version = sha256(os.urandom(16)).hexdigest()
 
@@ -481,7 +494,7 @@ def generate_result_dir(tmpdir, dvcs, values, branches=None):
             stderr='',
             profile=None)
         result.add_result({"name": "time_func", "version": benchmark_version, "params": params},
-                          value, started_at=timestamp, duration=1.0)
+                          value, started_at=updated, duration=1.0)
         result.save(result_dir)
 
     if params:
